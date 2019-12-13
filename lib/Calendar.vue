@@ -51,7 +51,7 @@
               <p @click="switchMonthView">
                 {{ stringifyDayHeader(currDate, pan) }}
               </p>
-              <div>
+              <div class="weekday-container">
                 <span
                   class="datepicker-weekRange"
                   v-for="(w, index) in daysOfWeek"
@@ -68,12 +68,15 @@
                   :data-date="stringify(d.date)"
                   @click="daySelect(d, $event)"
                 >
-                  <div>
+                  <div class="day-number">
                     <template v-if="d.sclass !== 'datepicker-item-gray'">{{
                       getSpecailDay(d.date) || d.text
                     }}</template>
                     <template v-else>{{ d.text }}</template>
-                    <div v-if="d.sclass !== 'datepicker-item-gray'">
+                    <div
+                      v-if="d.sclass !== 'datepicker-item-gray'"
+                      class="day-select"
+                    >
                       <slot :name="stringify(d.date)"></slot>
                     </div>
                   </div>
@@ -884,6 +887,7 @@ export default {
   color: rgba(0, 0, 0, 0.65098);
   position: relative;
   display: inline-block;
+  width: 100%;
 }
 .datepicker .form-control {
   box-sizing: border-box;
@@ -941,20 +945,41 @@ input.datepicker-input.with-reset-button {
   opacity: 0.2;
 }
 .day-cell {
-  margin-right: 4px;
-  margin-left: 4px;
+  margin: 15px 5px;
+}
+.day-number {
+  /*padding: 25px;*/
+  text-align: left;
+  font-size: 10px;
+  color: #424242;
+  position: relative;
+}
+.day-number::after {
+  content: "";
+  top: 25px;
+  left: -5px;
+  position: absolute;
+  height: 24px;
+  width: 32px;
+  border-radius: 25px;
+  background-color: #e8e8e8;
+}
+.day-select {
+  margin-left: -2px;
 }
 .datepicker-wrapper {
+  width: 100% !important;
   position: absolute;
   z-index: 1000;
 }
 .datepicker-popup {
   border: 1px solid #fff;
   border-radius: 5px;
-  background: #fff;
+  background: #f5f5f5;
   margin-top: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  width: 800px;
+  width: 100%;
+  padding: 0 20px 20px;
 }
 .datepicker-popup:before,
 .datepicker-popup:after {
@@ -965,24 +990,27 @@ input.datepicker-input.with-reset-button {
   clear: both;
 }
 .datepicker-inner {
-  width: 370px;
+  width: 50%;
   float: left;
+  padding-left: 10px;
 }
 .datepicker-body {
   padding: 10px 10px;
   text-align: center;
 }
 .datepicker-body p {
-  margin: 0 0 10px;
-  font-weight: bold;
-  font-size: 18px;
+  text-align: left;
+  margin: 0 0 10px 20px;
+  font-weight: normal;
+  padding-top: 28px;
+  font-size: 24px;
 }
 .datepicker-ctrl p,
 .datepicker-ctrl span,
 .datepicker-body span {
   display: inline-block;
   width: 40px;
-  line-height: 28px;
+  /*line-height: 28px;*/
   height: 28px;
 }
 .datepicker-ctrl p {
@@ -990,8 +1018,13 @@ input.datepicker-input.with-reset-button {
 }
 .datepicker-ctrl span {
   position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
 }
 .datepicker-body span {
+  color: #9b9b9b;
+  font-weight: normal;
+  font-size: 14px;
   text-align: center;
 }
 .datepicker-monthRange span {
@@ -1000,7 +1033,6 @@ input.datepicker-input.with-reset-button {
   line-height: 45px;
 }
 .datepicker-item-disable {
-  background-color: white !important;
   cursor: not-allowed !important;
 }
 .decadeRange span:first-child,
@@ -1009,10 +1041,9 @@ input.datepicker-input.with-reset-button {
 .datepicker-item-gray {
   color: #999;
 }
-.datepicker-dateRange-item-active:hover,
 .datepicker-dateRange-item-active {
-  background: #3276b1 !important;
-  color: white !important;
+  background: #f5f5f5 !important;
+  color: #000 !important;
 }
 .datepicker-item-disabled {
   color: #aaa;
@@ -1021,9 +1052,11 @@ input.datepicker-input.with-reset-button {
 .datepicker-monthRange {
   margin-top: 10px;
 }
+.weekday-container {
+  margin-left: -20px;
+}
 .datepicker-weekRange {
-  margin-right: 4px;
-  margin-left: 4px;
+  margin: 0 5px;
 }
 .datepicker-monthRange span,
 .datepicker-ctrl span,
@@ -1031,22 +1064,22 @@ input.datepicker-input.with-reset-button {
 .datepicker-dateRange span {
   cursor: pointer;
 }
-.datepicker-monthRange span:hover,
+.datepicker-dateRange {
+  margin-top: 0px !important;
+}
+/*.datepicker-monthRange span:hover,
 .datepicker-ctrl p:hover,
 .datepicker-ctrl i:hover,
 .datepicker-dateRange span:hover,
 .datepicker-dateRange-item-hover {
   background-color: #eeeeee;
-}
+}*/
 .datepicker-dateRange .daytoday-start,
-.datepicker-dateRange .daytoday-start:hover,
-.datepicker-dateRange .daytoday-end,
-.datepicker-dateRange .daytoday-end:hover {
+.datepicker-dateRange .daytoday-end {
   background: #3276b1 !important;
   color: white !important;
 }
-.datepicker-dateRange .daytoday-range,
-.datepicker-dateRange .daytoday-range:hover {
+.datepicker-dateRange .daytoday-range {
   background-color: #ddd;
 }
 
@@ -1057,12 +1090,14 @@ input.datepicker-input.with-reset-button {
   text-align: center;
 }
 .datepicker-ctrl {
-  position: relative;
-  /*height: 30px;*/
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   line-height: 30px;
   font-weight: bold;
   text-align: center;
-  top: 3px;
 }
 .month-btn {
   font-weight: bold;
